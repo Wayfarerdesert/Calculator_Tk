@@ -4,17 +4,16 @@ import ast
 root = Tk()
 root.title("Calculator")
 
-display = Entry(root)
-display.grid(row=0, columnspan=6, sticky=W + E)
+display = Entry(root, justify="right")
+display.grid(row=0, columnspan=6, sticky=W + E, padx=2 ,pady=6)
+root.geometry("300x300")
 
 index = 0
-
 
 def getNumbers(n):
     global index
     display.insert(index, n)
     index += 1
-
 
 def getOperator(operator):
     global index
@@ -22,10 +21,8 @@ def getOperator(operator):
     display.insert(index, operator)
     index += operator_length
 
-
 def clearDisplay():
     display.delete(0, END)
-
 
 def undo():
     display_state = display.get()
@@ -35,7 +32,6 @@ def undo():
         display.insert(0, display_new_state)
     else:
         clearDisplay()
-
 
 def calculate():
     display_state = display.get()
@@ -49,14 +45,24 @@ def calculate():
         clearDisplay()
         display.insert(0, f"Error: {e}")
 
+def changeSign():
+    display_state = display.get()
+    if display_state and display_state[0] != "-":
+        new_display_state = '-' + display_state
+        display.delete(0, END)
+        display.insert(0, new_display_state)
+    elif display_state and display_state[0] == "-":
+        new_display_state = display_state[1:]
+        display.delete(0, END)
+        display.insert(0, new_display_state)
 
 # Operations Buttons
 Button(root, text="x²", command=lambda: getOperator("**")).grid(
-    row=1, column=1, sticky=W + E)
+    row=1, column=1, sticky="nsew")
 Button(root, text="√", command=lambda: getOperator("**0.5")).grid(
-    row=1, column=2, sticky=W + E)
+    row=1, column=2, sticky="nsew")
 Button(root, text="←", command=lambda: undo()).grid(
-    row=1, column=4, columnspan=2, sticky=W + E)
+    row=1, column=4, columnspan=2, sticky="nsew")
 
 Button(root, text="%", command=lambda: getOperator("%")).grid(
     row=2, column=0, sticky=W + E)
@@ -101,13 +107,14 @@ Button(root, text="0", command=lambda: getNumbers(0)).grid(
     row=6, column=0, columnspan=2, sticky=W + E)
 
 # Side Buttons
-Button(root, text="C").grid(row=2, column=5, columnspan=2, sticky=W + E)
+Button(root, text="C", command=lambda:clearDisplay()).grid(
+    row=2, column=5, columnspan=2, sticky=W + E)
 Button(root, text="AC", command=lambda: clearDisplay()).grid(
     row=3, column=5, columnspan=2, sticky=W + E)
 Button(root, text="(", command=lambda: getOperator("(")).grid(
     row=4, column=5, columnspan=2, sticky=W + E)
 Button(root, text=")", command=lambda: getOperator(")")).grid(
     row=5, column=5, columnspan=2, sticky=W + E)
-Button(root, text="+/-").grid(row=6, column=5, sticky=W + E)
+Button(root, text="+/-", command=lambda: changeSign()).grid(row=6, column=5, sticky=W + E)
 
 root.mainloop()
